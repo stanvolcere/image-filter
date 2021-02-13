@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { filterImageFromURL, deleteLocalFiles } from './util/util';
+import { requireAuth } from "./middlewares/auth";
 
 (async () => {
 
@@ -33,7 +34,7 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
 	// Project  Endpoint
 	// Filters and image
-	app.get("/filteredimage", async (req, res) => {
+	app.get("/filteredimage", requireAuth, async (req, res) => {
 		const { image_url } = req.query;
 
 		// validate the image_url query
