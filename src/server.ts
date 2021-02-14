@@ -35,31 +35,37 @@ import { requireAuth } from "./middlewares/auth";
 	// Project  Endpoint
 	// Filters and image
 	app.get("/filteredimage", requireAuth, async (req, res) => {
-		const { image_url } = req.query;
 
-		// validate the image_url query
-		if (image_url) {
-			//call filterImageFromURL(image_url) to filter the image
-			const result = await filterImageFromURL(image_url);
+		try {
+			const { image_url } = req.query;
 
-			//send the resulting file in the response
-			res.sendFile(result, function (err) {
-				if (err) {
-					console.log(err)
-				} else {
-					//deletes any files on the server on finish of the response
-					deleteLocalFiles([result])
-				}
-			});
-		} else {
-			res.status(400).send({ message: "Invalid params" })
+			// validate the image_url query
+			if (image_url) {
+				//call filterImageFromURL(image_url) to filter the image
+				const result = await filterImageFromURL(image_url);
+
+				//send the resulting file in the response
+				res.sendFile(result, function (err) {
+					if (err) {
+						console.log(err)
+					} else {
+						//deletes any files on the server on finish of the response
+						deleteLocalFiles([result])
+					}
+				});
+			} else {
+				res.status(400).send({ message: "Invalid params" })
+			}
+		} catch (err) {
+			console.log(err.message)
+			res.status(500).send({ message: "Server error" })
 		}
 	});
 
 	// Root Endpoint
 	// Displays a simple message to the user
 	app.get("/", async (req, res) => {
-		res.send("try GET /filteredimage?image_url={{}}")
+		res.send("Welcome to my image filter app! Try GET /filteredimage?image_url={{IMAGE_URL}}. Note: I've added authentication so you'll need a token to get a response.")
 	});
 
 
